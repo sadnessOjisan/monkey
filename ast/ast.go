@@ -50,12 +50,28 @@ type ExpressionStatement struct {
 
 func (es *ExpressionStatement) statementNode()       {}
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
-
 func (es *ExpressionStatement) String() string {
 	if es.Expression != nil {
 		return es.Expression.String()
 	}
 	return ""
+}
+
+type BlockStatement struct {
+	Token      token.Token // token.LBRACE
+	Statements []Statement
+}
+
+func (bs *BlockStatement) statementNode()       {}
+func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Literal }
+func (bs *BlockStatement) String() string {
+	var out bytes.Buffer
+
+	for _, s := range bs.Statements {
+		out.WriteString(s.String())
+	}
+
+	return out.String()
 }
 
 type LetStatement struct {
@@ -66,7 +82,6 @@ type LetStatement struct {
 
 func (ls *LetStatement) statementNode()       {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
-
 func (ls *LetStatement) String() string {
 	var out bytes.Buffer
 
@@ -90,7 +105,6 @@ type ReturnStatement struct {
 
 func (rs *ReturnStatement) statementNode()       {}
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
-
 func (rs *ReturnStatement) String() string {
 	var out bytes.Buffer
 
@@ -113,7 +127,6 @@ type PrefixExpression struct {
 
 func (pe *PrefixExpression) expressionNode()      {}
 func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
-
 func (pe *PrefixExpression) String() string {
 	var out bytes.Buffer
 
@@ -134,7 +147,6 @@ type InfixExpression struct {
 
 func (ie *InfixExpression) expressionNode()      {}
 func (ie *InfixExpression) TokenLiteral() string { return ie.Token.Literal }
-
 func (ie *InfixExpression) String() string {
 	var out bytes.Buffer
 
@@ -143,6 +155,30 @@ func (ie *InfixExpression) String() string {
 	out.WriteString(" " + ie.Operator + " ")
 	out.WriteString(ie.Right.String())
 	out.WriteString(")")
+
+	return out.String()
+}
+
+type IfExpression struct {
+	Token       token.Token // token.IF
+	Condition   Expression
+	Consequence *BlockStatement
+	Alternative *BlockStatement
+}
+
+func (ie *IfExpression) expressionNode()      {}
+func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
+func (ie *IfExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("if")
+	out.WriteString(ie.Condition.String())
+	out.WriteString(" ")
+	out.WriteString(ie.Consequence.String())
+
+	if ie.Alternative != nil {
+		out.WriteString(ie.Alternative.String())
+	}
 
 	return out.String()
 }
