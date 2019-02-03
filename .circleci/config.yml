@@ -1,10 +1,17 @@
 version: 2
 jobs:
-  build:
+  build_and_test:
     docker:
       - image: circleci/golang:1.11
     working_directory: /go/src/github.com/tyabu12/monkey
     steps:
       - checkout
-      - run: make
-      - run: make test
+      - run:
+        - name: Build
+        - command: make
+      - run:
+        - name: Test with Coverage Profile
+        - command: make ci-test
+      - run:
+        - name: Send Coverage Report
+        - command: bash <(curl -s https://codecov.io/bash)
