@@ -11,16 +11,16 @@ jobs:
     steps:
       - checkout
       - run:
-        - name: Build
-        - command: make
+        name: Build
+        command: make
   test:
     executor:
       name: default
     steps:
       - checkout
       - run:
-        - name: Run Test
-        - command: |
+        name: Run Test
+        command: |
           make ci-test
           # Upload test report
           bash <(curl -s https://codecov.io/bash)
