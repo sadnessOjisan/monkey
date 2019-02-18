@@ -127,9 +127,12 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
+	p.nextToken()
 
-	// TODO: セミロコンに遭遇するまで式を読み飛ばしてしまっている
-	for !p.curTokenIs(token.SEMICOLON) {
+	stmt.Value = p.parseExpression(LOWEST)
+
+	// skip ;
+	if p.peekTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
 
@@ -141,8 +144,10 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 
 	p.nextToken()
 
-	// TODO: セミロコンに遭遇するまで式を読み飛ばしてしまっている
-	for !p.curTokenIs(token.SEMICOLON) {
+	stmt.ReturnValue = p.parseExpression(LOWEST)
+
+	// skip ;
+	if p.peekTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
 

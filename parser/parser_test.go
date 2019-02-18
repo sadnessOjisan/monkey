@@ -12,11 +12,11 @@ func TestLetStatements(t *testing.T) {
 	tests := []struct {
 		input              string
 		expectedIdentifier string
-		expectedValue      int64
+		expectedValue      interface{}
 	}{
 		{"let x = 5;", "x", 5},
-		{"let y = 10;", "y", 10},
-		{"let foobar = 838383;", "foobar", 838383},
+		{"let y = true;", "y", true},
+		{"let foobar = y;", "foobar", "y"},
 	}
 
 	for _, tt := range tests {
@@ -45,11 +45,11 @@ func TestLetStatements(t *testing.T) {
 func TestReturnStatements(t *testing.T) {
 	tests := []struct {
 		input         string
-		expectedValue int64
+		expectedValue interface{}
 	}{
 		{"return 5;", 5},
-		{"return 10;", 10},
-		{"return 993322;", 993322},
+		{"return true;", true},
+		{"return foobar;", "foobar"},
 	}
 
 	for _, tt := range tests {
@@ -310,6 +310,8 @@ func TestParsingPrefixExpressions(t *testing.T) {
 	}{
 		{"!5;", "!", 5},
 		{"-15;", "-", 15},
+		{"!foobar;", "!", "foobar"},
+		{"-foobar;", "-", "foobar"},
 		{"!true;", "!", true},
 		{"!false;", "!", false},
 	}
@@ -338,7 +340,7 @@ func TestParsingPrefixExpressions(t *testing.T) {
 		if exp.Operator != tt.operator {
 			t.Fatalf("exp.Operator not %s. got=%s", tt.operator, exp.Operator)
 		}
-		if !testLiteralExpression(t, exp, tt.value) {
+		if !testLiteralExpression(t, exp.Right, tt.value) {
 			return
 		}
 	}
