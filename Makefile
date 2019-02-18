@@ -10,7 +10,7 @@ test:
 
 .PHONY: ci-test
 ci-test:
-	go test -v -cover ./...
+	go test -v -coverprofile=cover.out ./...
 
 .PHONY: clean
 clean:
