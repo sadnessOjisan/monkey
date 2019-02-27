@@ -52,6 +52,26 @@ if (10 > 1) {
 			"foobar",
 			"identifier not found: foobar",
 		},
+		{
+			"if (a) { true }",
+			"identifier not found: a",
+		},
+		{
+			"let a = b",
+			"identifier not found: b",
+		},
+		{
+			"-a",
+			"identifier not found: a",
+		},
+		{
+			"let b = 1; a + b",
+			"identifier not found: a",
+		},
+		{
+			"let a = 1; a + b",
+			"identifier not found: b",
+		},
 	}
 
 	for _, tt := range tests {
@@ -125,6 +145,7 @@ func TestIfElseExpression(t *testing.T) {
 		{"if (1 > 2) { 10 }", nil},
 		{"if (1 > 2) { 10 } else { 20 }", 20},
 		{"if (1 < 2) { 10 } else { 20 }", 10},
+		{"let a = if (false) {}; if (a) { 10 } else { 20 }", 20}, // a = NULL
 	}
 
 	for _, tt := range tests {
@@ -206,6 +227,7 @@ func TestBangOperator(t *testing.T) {
 		{"!5", false},
 		{"!!true", true},
 		{"!!5", true},
+		{"let a = if (false) {}; !a", true}, // !NULL
 	}
 
 	for _, tt := range tests {
