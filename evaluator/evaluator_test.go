@@ -72,6 +72,14 @@ if (10 > 1) {
 			"let a = 1; a + b",
 			"identifier not found: b",
 		},
+		{
+			"let f = 1; f(1)",
+			"not a function: INTEGER",
+		},
+		{
+			"fn() {}(1, x)",
+			"identifier not found: x",
+		},
 	}
 
 	for _, tt := range tests {
