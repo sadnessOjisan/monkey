@@ -320,6 +320,11 @@ func TestBuiltinFunction(t *testing.T) {
 		{`len([1])`, 1},
 		{`len([1, 2, 3])`, 3},
 		{`len(["aaa", 1, "ba", fn(x) { if(x) { true } else { 3 } }])`, 4},
+		{`first([])`, nil},
+		{`first([1])`, 1},
+		{`first([11, "aaa"])`, 11},
+		{`first([1], [1])`, "wrong number of arguments. got=2, want=1"},
+		{`first(1)`, "argument to `first` must be ARRAY, got INTEGER"},
 	}
 
 	for _, tt := range tests {
