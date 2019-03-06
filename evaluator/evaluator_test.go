@@ -334,7 +334,13 @@ func TestBuiltinFunction(t *testing.T) {
 		{`rest([1])`, nil},
 		{`rest([1, 11])`, []int{11}},
 		{`rest([1, 11, 33])`, []int{11, 33}},
+		{`rest()`, "wrong number of arguments. got=0, want=1"},
 		{`rest(1)`, "argument to `rest` must be ARRAY, got INTEGER"},
+		{`push([], 1)`, []int{1}},
+		{`push([2], 1)`, []int{2, 1}},
+		{`push([3, 2], 1)`, []int{3, 2, 1}},
+		{`push([])`, "wrong number of arguments. got=1, want=2"},
+		{`push(1, 1)`, "argument to `push` must be ARRAY, got INTEGER"},
 	}
 
 	for _, tt := range tests {
