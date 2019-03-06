@@ -8,6 +8,78 @@ import (
 	"github.com/tyabu12/monkey/parser"
 )
 
+func TestWithFun(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{
+			`
+let map = fn(arr, f) {
+	let iter = fn(arr, acc) {
+		if (len(arr) == 0) { acc }
+		else { iter(rest(arr), push(acc, f(first(arr)))); }
+	};
+	iter(arr, []);
+};
+let a = [1, 2, 3, 4];
+let double = fn(x) { x * 2 };
+map(a, double);
+`,
+			[]int{2, 4, 6, 8},
+		},
+		{
+			`
+let reduce = fn(arr, initial, f) {
+	let iter = fn(arr, result) {
+		if (len(arr) == 0) { result }
+		else { iter(rest(arr), f(result, first(arr))); }
+	};
+	iter(arr, initial);
+};
+let sum = fn(arr) {
+	reduce(arr, 0, fn(initial, el) { initial + el });
+};
+sum([1, 2, 3, 4, 5])
+`,
+			15,
+		},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		switch expected := tt.expected.(type) {
+		case int:
+			testIntegerObject(t, evaluated, int64(expected))
+		case string:
+			errObj, ok := evaluated.(*object.Error)
+			if !ok {
+				t.Errorf("object is not Error. got=%T (%+v)",
+					evaluated, evaluated)
+				continue
+			}
+			if errObj.Message != expected {
+				t.Errorf("wrong error message. expected=%q, got=%q",
+					tt.expected, errObj.Message)
+			}
+		case []int:
+			array, ok := evaluated.(*object.Array)
+			if !ok {
+				t.Errorf("obj not Array. got=%T (%+v)", evaluated, evaluated)
+				continue
+			}
+			if len(array.Elements) != len(expected) {
+				t.Errorf("wrong num of elements. want=%d, got=%d",
+					len(expected), len(array.Elements))
+				continue
+			}
+			for i, expectedElem := range expected {
+				testIntegerObject(t, array.Elements[i], int64(expectedElem))
+			}
+		}
+	}
+}
+
 func TestErrorHandling(t *testing.T) {
 	tests := []struct {
 		input           string
