@@ -23,6 +23,8 @@ const (
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	FUNCTION_OBJ     = "FUNCTION"
 	BUILTIN_OBJ      = "BUILTIN"
+
+	QUOTE = "QUOTE"
 )
 
 type HashKey struct {
@@ -176,3 +178,10 @@ type Builtin struct {
 
 func (b *Builtin) Type() ObjectType { return BUILTIN_OBJ }
 func (b *Builtin) Inspect() string  { return "builtin function" }
+
+type Quote struct {
+	Node ast.Node
+}
+
+func (q *Quote) Type() ObjectType { return QUOTE }
+func (q *Quote) Inspect() string  { return "QUOTE(" + q.Node.String() + ")" }
